@@ -101,12 +101,12 @@ The default template is:
 
 Due to the Internet connection and the API latency, `hnwelcome` may slow down
 the shell or Vim startup time if you configure them to run it on startup. By
-default, `hnwelcome` will try to fetch the story in under 1 second, or timeout
+default, `hnwelcome` will try to fetch the story in under 2 seconds, or timeout
 nicely otherwise. You can change the timeout value with a `--timeout` argument.
 For example, if you have a somewhat slow Internet connection and you are ready
-to wait for up to 2 seconds:
+to wait for up to 5 seconds:
 
-    hnwelcome --timetout 2000
+    hnwelcome --timetout 5s
 
 ## License
 

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"math/rand"
+	"net"
 	"net/http"
 	"os"
 	"text/template"
@@ -31,6 +32,9 @@ func listStories(storyType string, timeout time.Duration) ([]int32, error) {
 	client := http.Client{Timeout: timeout}
 	resp, err := client.Get(url)
 	if err != nil {
+		if e, ok := err.(net.Error); ok && e.Timeout() {
+			err = fmt.Errorf("Whoops... News are coming in slowly today...")
+		}
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -73,22 +77,27 @@ func loadTemplate(tmplText string) (*template.Template, error) {
 	return tmpl, err
 }
 
+func abort(err error) {
+	fmt.Println(err.Error())
+	os.Exit(0)
+}
+
 func main() {
-	newest := flag.Bool("newest", false, "Show newest stories (deafult is to show current top stories)")
+	newest := flag.Bool("newest", false, "Show newest stories instead (default is to show current top stories)")
 	maxResults := flag.Int("n", 5, "Chose randomly from this many top results")
-	timeoutText := flag.String("timeout", "1s", "Timeout duration, as text. Valid time units are m, s, ms, etc.")
+	timeoutText := flag.String("timeout", "2s", "Timeout duration, as text. Valid time units are m, s, ms, etc.")
 	tmplText := flag.String("template", "", "Output formatting template")
 	flag.Parse()
 
 	timeout, err := time.ParseDuration(*timeoutText)
 	if err != nil {
-		panic(err)
+		abort(err)
 	}
 	timeout = timeout / 2 // there is a total of 2 requests made hereafter
 
 	tmpl, err := loadTemplate(*tmplText)
 	if err != nil {
-		panic(err)
+		abort(err)
 	}
 
 	storyType := "top"
@@ -97,7 +106,7 @@ func main() {
 	}
 	storyIds, err := listStories(storyType, timeout)
 	if err != nil {
-		panic(err)
+		abort(err)
 	}
 
 	selectionSize := *maxResults
@@ -107,11 +116,11 @@ func main() {
 	storyId := storyIds[rand.Intn(selectionSize)]
 	story, err := getStory(storyId, timeout)
 	if err != nil {
-		panic(err)
+		abort(err)
 	}
 
 	err = printStory(story, tmpl)
 	if err != nil {
-		panic(err)
+		abort(err)
 	}
 }
