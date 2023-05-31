@@ -1,0 +1,14 @@
+#!/bin/bash
+
+rm -rf bin && mkdir bin
+
+GOOS=linux    GOARCH=386    go build -o bin/linux-386/hnwelcome .
+GOOS=linux    GOARCH=amd64  go build -o bin/linux-amd64/hnwelcome .
+GOOS=linux    GOARCH=arm    go build -o bin/linux-arm/hnwelcome .
+GOOS=linux    GOARCH=arm64  go build -o bin/linux-arm64/hnwelcome .
+GOOS=darwin   GOARCH=amd64  go build -o bin/mac-amd64/hnwelcome .
+GOOS=darwin   GOARCH=arm64  go build -o bin/mac-arm64/hnwelcome .
+GOOS=windows  GOARCH=386    go build -o bin/win-386/hnwelcome.exe .
+GOOS=windows  GOARCH=amd64  go build -o bin/win-amd64/hnwelcome.exe .
+GOOS=windows  GOARCH=arm    go build -o bin/win-arm/hnwelcome.exe .
+GOOS=windows  GOARCH=arm64  go build -o bin/win-arm64/hnwelcome.exe .
