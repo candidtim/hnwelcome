@@ -61,10 +61,15 @@ func printStory(story map[string]interface{}) {
 }
 
 func main() {
+	newest := flag.Bool("newest", false, "Show newest stories (deafult is to show current top stories)")
 	maxResults := flag.Int("n", 5, "Chose randomly from this many top results")
 	flag.Parse()
 
-	storyIds, err := listStories("top")
+	storyType := "top"
+	if *newest {
+		storyType = "new"
+	}
+	storyIds, err := listStories(storyType)
 	if err != nil {
 		panic(err)
 	}
