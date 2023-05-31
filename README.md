@@ -2,6 +2,7 @@
 
      _________________________________________________________________
     / Show HN: `hnwelcome` is CLI app to show top Hacker News stories \
+    | https://github.com/candidtim/hnwelcome                          |
     \ https://news.ycombinator.com/item?id=???                        /
      -----------------------------------------------------------------
             \   ^__^
@@ -39,7 +40,7 @@ One of the newest stories:
 
     $ hnwelcome --newest
 
-To choose randomly between the top 10 storied (instead of the default of top 5):
+To choose randomly between the top 10 stories (instead of the default of top 5):
 
     $ hnwelcome -n 10
 
@@ -62,7 +63,8 @@ See the built-in help for more options, or read below for customization.
 ### Show the top stories in new shell sessions
 
 If you want to see one of the top stories every time you start a terminal, you
-may run the above command in your shell's `.*rc` file (`.bashrc`, `.zshrc`).
+may run `hnwelcome | cowsay -n` in your shell's `.*rc` file
+(`.bashrc`, `.zshrc`).
 
 ### Show the top stories in Vim on startup
 
