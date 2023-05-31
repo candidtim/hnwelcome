@@ -25,10 +25,10 @@ const DefaultTemplate = `{{.Title}} [{{.Score}}]
 https://news.ycombinator.com/item?id={{.Id}}
 `
 
-func listStories(storyType string) ([]int32, error) {
+func listStories(storyType string, timeout time.Duration) ([]int32, error) {
 	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/%sstories.json", storyType)
 
-	client := http.Client{Timeout: 500 * time.Millisecond}
+	client := http.Client{Timeout: timeout}
 	resp, err := client.Get(url)
 	if err != nil {
 		return nil, err
@@ -43,9 +43,9 @@ func listStories(storyType string) ([]int32, error) {
 	return data, nil
 }
 
-func getStory(storyId int32) (*Story, error) {
+func getStory(storyId int32, timeout time.Duration) (*Story, error) {
 	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", storyId)
-	client := http.Client{Timeout: 500 * time.Millisecond}
+	client := http.Client{Timeout: timeout}
 	resp, err := client.Get(url)
 	if err != nil {
 		return nil, err
@@ -76,8 +76,15 @@ func loadTemplate(tmplText string) (*template.Template, error) {
 func main() {
 	newest := flag.Bool("newest", false, "Show newest stories (deafult is to show current top stories)")
 	maxResults := flag.Int("n", 5, "Chose randomly from this many top results")
+	timeoutText := flag.String("timeout", "1s", "Timeout duration, as text. Valid time units are m, s, ms, etc.")
 	tmplText := flag.String("template", "", "Output formatting template")
 	flag.Parse()
+
+	timeout, err := time.ParseDuration(*timeoutText)
+	if err != nil {
+		panic(err)
+	}
+	timeout = timeout / 2 // there is a total of 2 requests made hereafter
 
 	tmpl, err := loadTemplate(*tmplText)
 	if err != nil {
@@ -88,7 +95,7 @@ func main() {
 	if *newest {
 		storyType = "new"
 	}
-	storyIds, err := listStories(storyType)
+	storyIds, err := listStories(storyType, timeout)
 	if err != nil {
 		panic(err)
 	}
@@ -98,7 +105,7 @@ func main() {
 		selectionSize = len(storyIds)
 	}
 	storyId := storyIds[rand.Intn(selectionSize)]
-	story, err := getStory(storyId)
+	story, err := getStory(storyId, timeout)
 	if err != nil {
 		panic(err)
 	}

@@ -14,8 +14,8 @@
 A simple and fast CLI appliaction to show top
 [Hacker News](https://news.ycombinator.com/) stories in the command line. Works
 best with [`cowsay`](https://en.wikipedia.org/wiki/Cowsay). Use it like
-[`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix)),
-but tap into an endless supply of Hacker News in real time.
+[`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix))
+and tap into an endless supply of top Hacker News stories.
 
 ## Installation
 
