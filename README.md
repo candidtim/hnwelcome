@@ -1,4 +1,4 @@
-# hnwelcome
+# HN Welcome
 
      _________________________________________________________________
     / Show HN: `hnwelcome` is CLI app to show top Hacker News stories \

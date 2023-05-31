@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -54,17 +55,21 @@ func getStory(storyId int32) (story map[string]interface{}, err error) {
 func printStory(story map[string]interface{}) {
 	fmt.Printf("%s ", story["title"])
 	fmt.Printf("[%.f]\n", story["score"])
+	// FIXME: url can be nil (e.g., LaunchHN, etc.)
 	fmt.Printf("%s\n", story["url"])
 	fmt.Printf("https://news.ycombinator.com/item?id=%.f\n", story["id"])
 }
 
 func main() {
+	maxResults := flag.Int("n", 5, "Chose randomly from this many top results")
+	flag.Parse()
+
 	storyIds, err := listStories("top")
 	if err != nil {
 		panic(err)
 	}
 
-	selectionSize := min(5, len(storyIds))
+	selectionSize := min(*maxResults, len(storyIds))
 	storyId := storyIds[rand.Intn(selectionSize)]
 	story, err := getStory(storyId)
 	if err != nil {
