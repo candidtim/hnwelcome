@@ -26,6 +26,8 @@ With Go tool chain:
 Or, download a binary for your OS from the
 [Releases](https://github.com/candidtim/hnwelcome/releases) page.
 
+If nothing else works, clone the repository and build with `go build .`.
+
 ## Usage
 
 To see one of the top 5 stories:
