@@ -6,17 +6,26 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"os"
+	"text/template"
 	"time"
 )
 
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
+type Story struct {
+	By    string
+	Time  string
+	Title string
+	Score int
+	Url   string
+	Id    int
 }
 
-func listStories(storyType string) (storyIds []int32, err error) {
+const DefaultTemplate = `{{.Title}} [{{.Score}}]
+{{.Url}}
+https://news.ycombinator.com/item?id={{.Id}}
+`
+
+func listStories(storyType string) ([]int32, error) {
 	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/%sstories.json", storyType)
 
 	client := http.Client{Timeout: 500 * time.Millisecond}
@@ -34,7 +43,7 @@ func listStories(storyType string) (storyIds []int32, err error) {
 	return data, nil
 }
 
-func getStory(storyId int32) (story map[string]interface{}, err error) {
+func getStory(storyId int32) (*Story, error) {
 	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", storyId)
 	client := http.Client{Timeout: 500 * time.Millisecond}
 	resp, err := client.Get(url)
@@ -43,27 +52,37 @@ func getStory(storyId int32) (story map[string]interface{}, err error) {
 	}
 	defer resp.Body.Close()
 
-	// FIXME: unmarshall into a struct?
-	var data map[string]interface{}
-	json.NewDecoder(resp.Body).Decode(&data)
+	story := &Story{}
+	json.NewDecoder(resp.Body).Decode(story)
 	if err != nil {
 		return nil, err
 	}
-	return data, nil
+	return story, nil
 }
 
-func printStory(story map[string]interface{}) {
-	fmt.Printf("%s ", story["title"])
-	fmt.Printf("[%.f]\n", story["score"])
-	// FIXME: url can be nil (e.g., LaunchHN, etc.)
-	fmt.Printf("%s\n", story["url"])
-	fmt.Printf("https://news.ycombinator.com/item?id=%.f\n", story["id"])
+func printStory(story *Story, tmpl *template.Template) error {
+	err := tmpl.Execute(os.Stdout, story)
+	return err
+}
+
+func loadTemplate(tmplText string) (*template.Template, error) {
+	if len(tmplText) == 0 {
+		tmplText = DefaultTemplate
+	}
+	tmpl, err := template.New("hnwelcome").Parse(tmplText)
+	return tmpl, err
 }
 
 func main() {
 	newest := flag.Bool("newest", false, "Show newest stories (deafult is to show current top stories)")
 	maxResults := flag.Int("n", 5, "Chose randomly from this many top results")
+	tmplText := flag.String("template", "", "Output formatting template")
 	flag.Parse()
+
+	tmpl, err := loadTemplate(*tmplText)
+	if err != nil {
+		panic(err)
+	}
 
 	storyType := "top"
 	if *newest {
@@ -74,12 +93,18 @@ func main() {
 		panic(err)
 	}
 
-	selectionSize := min(*maxResults, len(storyIds))
+	selectionSize := *maxResults
+	if len(storyIds) < *maxResults {
+		selectionSize = len(storyIds)
+	}
 	storyId := storyIds[rand.Intn(selectionSize)]
 	story, err := getStory(storyId)
 	if err != nil {
 		panic(err)
 	}
 
-	printStory(story)
+	err = printStory(story, tmpl)
+	if err != nil {
+		panic(err)
+	}
 }

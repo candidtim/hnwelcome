@@ -78,19 +78,24 @@ with the following configuration:
 
 ### Customize the output format
 
-To customize the output format, create a template file with Golang
-[template syntax](https://pkg.go.dev/text/template) and point the `--template`
-argument to it. See the
-[Hacker News API documentation](https://github.com/HackerNews/API#items)
-for the list of fields available for **stories**.
+To customize the output format pass a `--template` to use for the formatting.
+The template should use the Golang
+[template syntax](https://pkg.go.dev/text/template). Available variables are:
+`By`, `Time`, `Title`, `Score`, `Url`, `Id`. See the
+[Hacker News API documentation](https://github.com/HackerNews/API#items) for
+more details about their values.
 
     $ hnwelcome --template PATH
 
-For example, the default template is:
+For example, to print out only the title and the author:
 
-    {{title}} [{{score}}]
-    {{url}}
-    https://news.ycombinator.com/item?id={{id}}
+    $ hnwelcome --template "{{.Title}} by {{.By}}"
+
+The default template is:
+
+    {{.Title}} [{{.Score}}]
+    {{.Url}}
+    https://news.ycombinator.com/item?id={{.Id}}
 
 ### Latency and timeout
 
