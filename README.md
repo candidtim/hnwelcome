@@ -3,7 +3,7 @@
      _________________________________________________________________
     / Show HN: `hnwelcome` is CLI app to show top Hacker News stories \
     | https://github.com/candidtim/hnwelcome                          |
-    \ https://news.ycombinator.com/item?id=???                        /
+    \ https://news.ycombinator.com/item?id=36146152                   /
      -----------------------------------------------------------------
             \   ^__^
              \  (oo)\_______
