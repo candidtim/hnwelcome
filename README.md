@@ -1,10 +1,10 @@
 # HN Welcome
 
-     _________________________________________________________________
-    / Show HN: `hnwelcome` is CLI app to show top Hacker News stories \
-    | https://github.com/candidtim/hnwelcome                          |
-    \ https://news.ycombinator.com/item?id=36146152                   /
-     -----------------------------------------------------------------
+     ___________________________________________________________________
+    / Show HN: `hnwelcome` is a CLI app to show top Hacker News stories \
+    | https://github.com/candidtim/hnwelcome                            |
+    \ https://news.ycombinator.com/item?id=36146152                     /
+     -------------------------------------------------------------------
             \   ^__^
              \  (oo)\_______
                 (__)\       )\/\
@@ -21,7 +21,7 @@ and tap into an endless supply of top Hacker News stories.
 
 With Go tool chain:
 
-    $ go install github.com/candidtim/hnwelcome@latest
+    $ go install github.com/candidtim/hnwelcome@1.0.1
 
 Or, download a binary for your OS from the
 [Releases](https://github.com/candidtim/hnwelcome/releases) page.
